@@ -1,5 +1,5 @@
 import { combineReducers, createStore, applyMiddleware } from "redux";
-import textChangeReducer from "./reducers/sign-up";
+import textChangeReducer from "./reducers/auth";
 import notifications from "./reducers/notifications"
 import thunk from "redux-thunk";
 

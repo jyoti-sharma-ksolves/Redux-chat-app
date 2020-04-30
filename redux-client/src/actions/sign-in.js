@@ -2,7 +2,7 @@ import { successMessage, failurMessage } from './common-actions';
 
 export const submit = (userData) => {
     return (dispatch) => {
-        const url = 'http://localhost:8000/api/sign-up';
+        const url = 'http://localhost:8000/api/sign-in';
         fetch( url, {
             headers: {
                 'content-type': 'application/json',
@@ -10,10 +10,8 @@ export const submit = (userData) => {
             },
             method: 'POST',
             body: JSON.stringify({ 
-                first_name: userData.signUpFirstName,
-                last_name: userData.signUpLastName,
-                email: userData.signUpEmail,
-                password: userData.signUpPassword
+                email: userData.signInEmail,
+                password: userData.signInPassword
             }),
         })
         .then(response => response.json())
@@ -21,12 +19,16 @@ export const submit = (userData) => {
             if(jsonData.error) {
                 return dispatch(failurMessage('Please try again!'));
             }
-            else if (jsonData.message === 'Account created successfully') {
+            else if (jsonData.message === 'Login successful') {
                 return dispatch(successMessage(jsonData.message));
             }
-            else if (jsonData.message === 'Email already in use') {
+            else if (jsonData.message === 'Password incorrect') {
                 return dispatch(failurMessage(jsonData.message));
             }
+            else if (jsonData.message === 'User not exist') {
+                return dispatch(failurMessage(jsonData.message));
+            }
+            
         })
         .catch(error => {
             console.error(error);

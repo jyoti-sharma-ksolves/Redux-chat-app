@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { textChange, submit } from '../actions/sign-up';
+import { textChange } from '../actions/common-actions'
+import { submit } from '../actions/sign-up';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { Alert, AlertTitle } from '@material-ui/lab';
@@ -33,45 +34,45 @@ class SignUp extends React.Component {
                        <h1>Sign Up</h1>
                         <form onSubmit={this.onSubmit}>
                             <TextField
-                                name="firstName"
+                                name="signUpFirstName"
                                 label="first name"
                                 variant="outlined"
-                                value={userData.firstName}
+                                value={userData.signUpFirstName}
                                 onChange={this.handleChange}
                                 reqired="true"
                             />
                             <TextField
-                                name="lastName"
+                                name="signUpLastName"
                                 label="last name"
                                 variant="outlined"
-                                value={userData.lastName}
+                                value={userData.signUpLastName}
                                 onChange={this.handleChange}
                                 reqired="true"
                             />
                             <TextField
-                                name="email"
+                                name="signUpEmail"
                                 type="email"
                                 label="email"
                                 variant="outlined"
-                                value={userData.email}
+                                value={userData.signUpEmail}
                                 onChange={this.handleChange}
                                 reqired="true"
                             />
                             <TextField
                                 type="password"
-                                name="password"
+                                name="signUpPassword"
                                 label="password"
                                 variant="outlined"
-                                value={userData.password}
+                                value={userData.signUpPassword}
                                 onChange={this.handleChange}
                                 reqired="true"
                             />
                             <TextField
                                 type="password"
-                                name="pwconfirm"
+                                name="signUpPwconfirm"
                                 label="confirm password"
                                 variant="outlined"
-                                value={userData.pwconfirm}
+                                value={userData.signUpPwconfirm}
                                 onChange={this.handleChange}
                                 reqired="true"
                             />
@@ -80,8 +81,12 @@ class SignUp extends React.Component {
                                 Submit
                             </Button>
                         </form>
+                        <p>
+                            Aleady have an account? <br />
+                            <a href="/sign-in">Log in here</a>
+                        </p>
                         {notifications.type &&
-                            <div class="alert">
+                            <div className="alert">
                             <Alert severity={notifications.type}>
                                     <AlertTitle>{notifications.type}</AlertTitle>
                                     {/* This is an error alert — <strong>check it out!</strong> */}

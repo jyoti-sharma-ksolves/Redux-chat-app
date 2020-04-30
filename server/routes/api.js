@@ -125,7 +125,7 @@ router.post('/sign-in', function(req, res, next) {
           else {
             res.status(200)
               .json({
-                error: true,
+                error: false,
                 message: 'Password incorrect',
                 data: []
               })
