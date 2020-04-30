@@ -8,6 +8,15 @@ const textChange = (field, text) => {
     };
 }
 
+const changeMessage = (data) => {
+    return {
+        type: 'CHANGE_MESSAGE',
+        payload: {
+            data: data
+        }
+    };
+}
+
 const successMessage = (message) => {
     return {
         type: 'SUCCESS',
@@ -31,5 +40,6 @@ const failurMessage = (message) => {
 module.exports = {
     textChange,
     successMessage,
-    failurMessage
+    failurMessage,
+    changeMessage
 }
