@@ -19,7 +19,7 @@ router.post('/sign-up', function(req, res, next) {
     
     const query1 = `SELECT * FROM user_table WHERE email_='${email}'`;
     const query2 = `INSERT INTO user_table (first_name, last_name, email_, password) VALUES ('${fname}', '${lname}', '${email}', '${pwd}')`;
-
+    
     connection.pool.query(query1, (err, result) => {
       if(err) {
         res.status(500)
@@ -34,7 +34,7 @@ router.post('/sign-up', function(req, res, next) {
         if (result.rowCount === 1) {
           res.status(200)
             .json({
-              error: true,
+              error: false,
               message: 'Email already in use',
               data: []
             });

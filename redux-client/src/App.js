@@ -1,14 +1,10 @@
 import React from 'react';
 import './App.css';
-import SignUp from './containers/sign-up';
+import AllRoute from './routes';
 
 class App extends React.Component {
   render() {
-    return (
-      <div>
-        <SignUp />
-      </div>
-    )
+    return <AllRoute /> ;
   }
 }
 
