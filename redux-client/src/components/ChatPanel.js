@@ -1,12 +1,14 @@
 import React from 'react';
 import moment from 'moment';
 import Header from './Header';
+import { Alert, AlertTitle } from '@material-ui/lab';
 
 const ChatPanel = (props) => {
     const chatData = props.messages || [];
     const user = props.userInfo;
     const userList = props.userList;
     const receiver_id = props.receiver_id
+    const notifications = props.notifications;
 
     const timeFor = (time) => {
         const datef = new Date(time).toString();
@@ -34,6 +36,15 @@ const ChatPanel = (props) => {
             />
           </div>
           <div className="mesgs">
+            {notifications.message === 'Message not sent' &&
+              <div class="alert">
+                  <Alert severity={notifications.type}>
+                      <AlertTitle>{notifications.type}</AlertTitle>
+                          {/* This is an error alert — <strong>check it out!</strong> */}
+                      {notifications.message}
+                  </Alert>
+              </div>
+            }
             <div className="msg_history">
               {chatData.length > 0 &&
                 chatData.map ((item, index) => {

@@ -2,7 +2,7 @@ import React from 'react';
 import TextField from '@material-ui/core/TextField';
 import { connect } from 'react-redux';
 import { changeMessage, failurMessage } from '../actions/common-actions'
-import { getUserInfo, getUserList, getMessage, updateMessage, updateSender, updateReceiver, sendMessage } from '../actions/chat-room';
+import { getUserInfo, getUserList, getMessage, updateMessage, updateReceiver, sendMessage } from '../actions/chat-room';
 import { Alert, AlertTitle } from '@material-ui/lab';
 import Button from '@material-ui/core/Button';
 import UserList from '../components/UserList';
@@ -15,22 +15,21 @@ class ChatRoom extends React.Component {
     }
 
     componentWillMount () {
-        const id = JSON.parse(localStorage.getItem('document'));
-        this.props.dispatch(getUserInfo(id));
-        this.props.dispatch(updateSender(id));
-    }
-
-    componentDidMount () {
-        const { sender_id } = this.props.userInfoReducer;
-        this.props.dispatch(getUserList(sender_id));
-
-        setInterval(() => {
-           this.updateMessageInSetTimeOut(); 
-        }, 3000)
-        
+        const token = JSON.parse(localStorage.getItem('document'));
+        this.props.dispatch(getUserInfo(token));
     }
     
-    updateMessageInSetTimeOut = () => {
+    componentDidMount () {
+        const token = JSON.parse(localStorage.getItem('document'));
+        
+        this.props.dispatch(getUserList(token));
+        
+        setInterval(() => {
+            this.updateMessageInSetTimeOut(token); 
+        }, 3000)  
+    }
+    
+    updateMessageInSetTimeOut = (token) => {
         const {sender_id, receiver_id} = this.props.userInfoReducer;
         const url = `http://localhost:8000/api/receive-message?sender_id=${sender_id}&receiver_id=${receiver_id}`;
 
@@ -38,6 +37,7 @@ class ChatRoom extends React.Component {
             headers: {
                 'content-type': 'application/json',
                 accept: 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             method: 'GET'
         })
@@ -60,8 +60,8 @@ class ChatRoom extends React.Component {
     handleClick = (e, id) => {
         this.props.dispatch(updateReceiver(id));
 
-        const {sender_id, receiver_id} = this.props.userInfoReducer;
-        this.props.dispatch(getMessage(sender_id, receiver_id))
+        const {sender_id, receiver_id, userInfo} = this.props.userInfoReducer;
+        this.props.dispatch(getMessage(sender_id, receiver_id, userInfo.token))
     }
 
     handleChange = (e) => {
@@ -71,7 +71,8 @@ class ChatRoom extends React.Component {
     handleSubmit = () => {
         const time = moment(new Date()).format();
         const {sender_id, receiver_id, messageToSend} = this.props.userInfoReducer;
-        this.props.dispatch(sendMessage(sender_id, receiver_id, messageToSend, time))
+        this.props.dispatch(sendMessage(sender_id, receiver_id, messageToSend, time));
+        this.props.dispatch(changeMessage(''));
     }
 
     handleKeyPress = (e) => {
@@ -82,6 +83,7 @@ class ChatRoom extends React.Component {
 
     render () {
         const {userList, userInfo, messages, sender_id, receiver_id, messageToSend} = this.props.userInfoReducer;
+        const { notifications } = this.props.notifications;
         return (
           <div className="container">
             <div className="messaging">
@@ -115,13 +117,6 @@ class ChatRoom extends React.Component {
                     })}
                   </div>
                 </div>
-                {/* <ChatPanel
-                  user={user}
-                  chatData={chatData}
-                  userList={userList}
-                  receiver={receiver_id}
-                  history={this.props.history}
-                /> */}
                 <ChatPanel
                     messages={messages}
                     userInfo={userInfo}
@@ -131,6 +126,8 @@ class ChatRoom extends React.Component {
                     buttonClick={this.handleSubmit}
                     userList={userList}
                     receiver_id={receiver_id}
+                    notifications={notifications}
+                    token={userInfo.token}
                 />
               </div>
             </div>

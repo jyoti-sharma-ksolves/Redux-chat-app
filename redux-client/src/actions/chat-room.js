@@ -55,13 +55,14 @@ const updateReceiver = (data) => {
 //     };
 // }
 
-const getUserInfo = (id) => {
+const getUserInfo = (token) => {
     return (dispatch) => {
-        const url = `http://localhost:8000/api/user-info?id=${id}`; //temporary
+        const url = `http://localhost:8000/api/user-info`; //temporary
         fetch( url, {
             headers: {
                 'content-type': 'application/json',
                 accept: 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             method: 'GET'
         })
@@ -74,7 +75,10 @@ const getUserInfo = (id) => {
                 return dispatch(successMessage(jsonData.message));
             }
             else if (jsonData.message === 'Success') {
-                return dispatch(updateLoginUser(jsonData.data));
+                const actions = [updateLoginUser(jsonData.data), updateSender(jsonData.data.id)];
+                return actions.map(item => {
+                    return dispatch(item);
+                });
             }
         })
         .catch(error => {
@@ -84,13 +88,14 @@ const getUserInfo = (id) => {
     }
 }
 
-const getUserList = (id) => {
+const getUserList = (token) => {
     return (dispatch) => {
-        const url = `http://localhost:8000/api/user-list?id=${id}`;
+        const url = `http://localhost:8000/api/user-list`;
         fetch( url, {
             headers: {
                 'content-type': 'application/json',
                 accept: 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             method: 'GET'
         })
@@ -100,7 +105,10 @@ const getUserList = (id) => {
                 return dispatch(failurMessage('Please try again!'));
             }
             else if (jsonData.message === 'Success') {
-                return dispatch(updateUserList(jsonData.data));
+                const actions = [updateUserList(jsonData.data), updateReceiver(jsonData.data[0].id)];
+                return actions.map(item => {
+                    return dispatch(item);
+                });
             }
         })
         .catch(error => {
@@ -110,7 +118,7 @@ const getUserList = (id) => {
     }
 }
 
-const getMessage = (id1, id2) => {
+const getMessage = (id1, id2, token) => {
     console.log(id1, id2, '===')
     return (dispatch) => {
         const url = `http://localhost:8000/api/receive-message?sender_id=${id1}&receiver_id=${id2}`;
@@ -118,6 +126,7 @@ const getMessage = (id1, id2) => {
             headers: {
                 'content-type': 'application/json',
                 accept: 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             method: 'GET'
         })

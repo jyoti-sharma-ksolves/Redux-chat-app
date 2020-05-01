@@ -29,13 +29,12 @@ export const submit = (userData) => {
                 return dispatch(failurMessage('Please try again!'));
             }
             else if (jsonData.message === 'Login successful') {
-                let actions = [tokenUpdate(jsonData.data.id), successMessage(jsonData.message)]
+                let actions = [tokenUpdate(jsonData.accessToken), successMessage(jsonData.message)]
                 return actions.map(item => {
                     return dispatch(item);
                 })
             }
             else if (jsonData.message === 'Password incorrect') {
-                // localStorage.setItem('document', JSON.stringify(jsonData.data))
                 return dispatch(failurMessage(jsonData.message));
             }
             else if (jsonData.message === 'User not exist') {

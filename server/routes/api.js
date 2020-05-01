@@ -3,8 +3,9 @@ var router = express.Router();
 var md5 = require('md5');
 var jwt = require('jsonwebtoken');
 var connection = require('../config/config');
+var authenticateToken = require('../middleware/middleware');
 
-/* GET users listing. */
+
 router.get('/', function(req, res, next) {
   console.log(connection, '99')
   res.send('response');
@@ -97,8 +98,14 @@ router.post('/sign-in', function(req, res, next) {
           const userInfo = result.rows[0];
 
           if (userInfo.password === password) {
-            const accessToken = jwt.sign(userInfo, process.env.ACCESS_TOKEN_SECRET);
-            const q1 = `UPDATE user_table SET token='${accessToken}' WHERE id='${userInfo.id}'`;
+            let info = {};
+                info.id = userInfo.id;
+                info.first_name = userInfo.first_name;
+                info.last_name = userInfo.last_name;
+                info.time = new Date();
+
+            const accessToken = jwt.sign(info, process.env.ACCESS_TOKEN_SECRET);
+            const q1 = `UPDATE user_table SET token='${accessToken}' WHERE id=${info.id}`;
 
             connection.pool.query(q1, (err, result) => {
               if (err) {
@@ -116,7 +123,7 @@ router.post('/sign-in', function(req, res, next) {
                     error: false,
                     message: 'Login successful',
                     accessToken: accessToken,
-                    data: userInfo
+                    data: info
                   })
                 return;
               }
@@ -154,9 +161,9 @@ router.post('/sign-in', function(req, res, next) {
   }
 })
 
-router.get('/user-info', function(req, res, next) {
+router.get('/user-info', authenticateToken.authenticateToken, function(req, res, next) { //authenticateToken.authenticateToken
   try {
-    const id = req.query.id;
+    const id = req.body.userInfoId;
   
     const query = `SELECT * FROM user_table WHERE id='${id}'`;
 
@@ -202,7 +209,7 @@ router.get('/user-info', function(req, res, next) {
   }
 })
 
-router.get('/receive-message', function(req, res, next) {
+router.get('/receive-message', authenticateToken.authenticateToken, function(req, res, next) {
   try {
     const sender_id = req.query.sender_id;
     const receiver_id = req.query.receiver_id;
@@ -277,9 +284,9 @@ router.post('/send-message', function(req, res, next) {
   }
 })
 
-router.get('/user-list', function(req, res, next) {
+router.get('/user-list', authenticateToken.authenticateToken, function(req, res, next) {
   try {
-    const id = req.query.id;
+    const id = req.body.userInfoId;
     const query = `SELECT id,first_name,last_name,created_at FROM user_table  WHERE id NOT IN ('${id}') ORDER BY id DESC`;
   
     connection.pool.query(query, (err, result) => {
