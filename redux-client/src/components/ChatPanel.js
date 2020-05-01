@@ -1,10 +1,12 @@
 import React from 'react';
 import moment from 'moment';
+import Header from './Header';
 
 const ChatPanel = (props) => {
-    console.log(props, props.onChange, '%%%%%%%%%%%%%')
     const chatData = props.messages || [];
     const user = props.userInfo;
+    const userList = props.userList;
+    const receiver_id = props.receiver_id
 
     const timeFor = (time) => {
         const datef = new Date(time).toString();
@@ -16,12 +18,20 @@ const ChatPanel = (props) => {
           month: dateArray[2],
           hours
         }
-    } 
+    }
+
+    const receiverInfo = userList.filter(item => item.id === receiver_id);
 
     return (
         <div>
           <div className="header">
-            {/* <Header user={user} selectedUser={userList} receiver={receiver} history={this.props.history} /> */}
+            <Header
+              user={
+                {first_name: user.first_name,
+                last_name: user.last_name
+              }}
+              receiverInfo={receiverInfo}
+            />
           </div>
           <div className="mesgs">
             <div className="msg_history">

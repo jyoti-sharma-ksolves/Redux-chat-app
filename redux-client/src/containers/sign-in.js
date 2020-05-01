@@ -24,7 +24,10 @@ class SignIn extends React.Component {
     
     render () {
         const { notifications } = this.props.notifications;
-        let { userData } = this.props.textChangeReducer;
+        let { userData, token } = this.props.textChangeReducer;
+        localStorage.setItem('document', JSON.stringify(token));
+
+        console.log(this.props, '&&&')
         return (
             <React.Fragment>
                 {notifications.message === 'Login successful' ? 

@@ -1,5 +1,14 @@
 import { successMessage, failurMessage } from './common-actions';
 
+export const tokenUpdate = (data) => {
+  return {
+      type: 'UPDATE_TOKEN',
+      payload: {
+          data: data,
+      }
+  }
+}
+
 export const submit = (userData) => {
     return (dispatch) => {
         const url = 'http://localhost:8000/api/sign-in';
@@ -20,7 +29,10 @@ export const submit = (userData) => {
                 return dispatch(failurMessage('Please try again!'));
             }
             else if (jsonData.message === 'Login successful') {
-                return dispatch(successMessage(jsonData.message));
+                let actions = [tokenUpdate(jsonData.data.id), successMessage(jsonData.message)]
+                return actions.map(item => {
+                    return dispatch(item);
+                })
             }
             else if (jsonData.message === 'Password incorrect') {
                 // localStorage.setItem('document', JSON.stringify(jsonData.data))

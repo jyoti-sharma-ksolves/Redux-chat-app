@@ -5,6 +5,7 @@ import SignIn from './containers/sign-in';
 import ChatRoom from './containers/chat-room';
 
 const AllRoute = (props) => {
+  debugger
     return (
         <Router>
           <Switch>
@@ -13,7 +14,7 @@ const AllRoute = (props) => {
 
             <Route exact path="/sign-in" component={SignIn} />
 
-            <Route exact path="/chatroom" component={ChatRoom} />
+            <Route exact path="/chat-room" component={ChatRoom} />
 
           </Switch>
         </Router>

@@ -86,7 +86,7 @@ const getUserInfo = (id) => {
 
 const getUserList = (id) => {
     return (dispatch) => {
-        const url = 'http://localhost:8000/api/user-list';
+        const url = `http://localhost:8000/api/user-list?id=${id}`;
         fetch( url, {
             headers: {
                 'content-type': 'application/json',
@@ -169,14 +169,14 @@ const sendMessage = (id1,id2, text, time) => {
     }
 }
 
-const callGetMessage = (id1, id2) => {
-    console.log(id1, id2, '++++')
-  return (dispatch) => {
-      setTimeout(() => {
-        return dispatch(getMessage(id1, id2))
-      }, 500)
-  }
-}
+// const callGetMessage = (id1, id2) => {
+//     console.log(id1, id2, '++++')
+//   return (dispatch) => {
+//       setTimeout(() => {
+//         return dispatch(getMessage(id1, id2))
+//       }, 500)
+//   }
+// }
 
 export {
     getUserInfo,
@@ -185,5 +185,6 @@ export {
     sendMessage,
     updateSender,
     updateReceiver,
-    callGetMessage
+    updateMessage
+    // callGetMessage
 }

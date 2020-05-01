@@ -2,7 +2,6 @@ import React from 'react';
 
 
 const UserList = (props) => {
-    console.log(props)
     const { item, onClick, receiver_id } = props
 
     const strFormat = (str) => {

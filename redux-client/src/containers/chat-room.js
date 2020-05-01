@@ -1,8 +1,8 @@
 import React from 'react';
 import TextField from '@material-ui/core/TextField';
 import { connect } from 'react-redux';
-import { changeMessage } from '../actions/common-actions'
-import { getUserInfo, getUserList, getMessage, callGetMessage, updateSender, updateReceiver, sendMessage } from '../actions/chat-room';
+import { changeMessage, failurMessage } from '../actions/common-actions'
+import { getUserInfo, getUserList, getMessage, updateMessage, updateSender, updateReceiver, sendMessage } from '../actions/chat-room';
 import { Alert, AlertTitle } from '@material-ui/lab';
 import Button from '@material-ui/core/Button';
 import UserList from '../components/UserList';
@@ -15,16 +15,46 @@ class ChatRoom extends React.Component {
     }
 
     componentWillMount () {
-        const id = '24'
+        const id = JSON.parse(localStorage.getItem('document'));
         this.props.dispatch(getUserInfo(id));
         this.props.dispatch(updateSender(id));
     }
 
     componentDidMount () {
+        const { sender_id } = this.props.userInfoReducer;
+        this.props.dispatch(getUserList(sender_id));
+
+        setInterval(() => {
+           this.updateMessageInSetTimeOut(); 
+        }, 3000)
+        
+    }
+    
+    updateMessageInSetTimeOut = () => {
         const {sender_id, receiver_id} = this.props.userInfoReducer;
-        this.props.dispatch(getUserList());
-        console.log(callGetMessage(sender_id, receiver_id), '~~~~~~~~~~~~~~~~~~~~~~~~~')
-        this.props.dispatch(callGetMessage(sender_id, receiver_id));
+        const url = `http://localhost:8000/api/receive-message?sender_id=${sender_id}&receiver_id=${receiver_id}`;
+
+        fetch( url, {
+            headers: {
+                'content-type': 'application/json',
+                accept: 'application/json',
+            },
+            method: 'GET'
+        })
+        .then(response => response.json())
+        .then(jsonData => {
+            if(jsonData.error) {
+                return this.props.dispatch(failurMessage('Please try again!'));
+            }
+            else if (jsonData.message === 'Success') {
+                return this.props.dispatch(updateMessage(jsonData.data));
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            return this.props.dispatch(failurMessage('Please try again!'));
+        })
+
     }
 
     handleClick = (e, id) => {
@@ -99,6 +129,8 @@ class ChatRoom extends React.Component {
                     messageToSend={messageToSend}
                     onKeyPress={this.handleKeyPress}
                     buttonClick={this.handleSubmit}
+                    userList={userList}
+                    receiver_id={receiver_id}
                 />
               </div>
             </div>
