@@ -233,4 +233,10 @@ h5 {
 .dropdown div:hover {
     background-color: slategray;
     cursor: pointer;
-  }
+    display: block;
+}
+/* .dropdown div {
+  background-color: slategray;
+  cursor: pointer;
+  display: none;
+} */

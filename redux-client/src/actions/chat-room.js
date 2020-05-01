@@ -1,5 +1,4 @@
 import { successMessage, failurMessage } from './common-actions';
-import moment from 'moment';
 
 const updateLoginUser = (data) => {
     return {
@@ -13,6 +12,15 @@ const updateLoginUser = (data) => {
 const updateUserList = (data) => {
     return {
         type: 'USER_LIST',
+        payload: {
+            data: data,
+        }
+    };
+}
+
+const updateSearchList = (data) => {
+    return {
+        type: 'SEARCH_LIST',
         payload: {
             data: data,
         }
@@ -45,15 +53,6 @@ const updateReceiver = (data) => {
         }
     };
 }
-
-// export const sendMessage = (data) => {
-//     return {
-//         type: '',
-//         payload: {
-//             data: data,
-//         }
-//     };
-// }
 
 const getUserInfo = (token) => {
     return (dispatch) => {
@@ -105,7 +104,7 @@ const getUserList = (token) => {
                 return dispatch(failurMessage('Please try again!'));
             }
             else if (jsonData.message === 'Success') {
-                const actions = [updateUserList(jsonData.data), updateReceiver(jsonData.data[0].id)];
+                const actions = [updateUserList(jsonData.data), updateSearchList(jsonData.data), updateReceiver(jsonData.data[0].id)];
                 return actions.map(item => {
                     return dispatch(item);
                 });
@@ -119,7 +118,6 @@ const getUserList = (token) => {
 }
 
 const getMessage = (id1, id2, token) => {
-    console.log(id1, id2, '===')
     return (dispatch) => {
         const url = `http://localhost:8000/api/receive-message?sender_id=${id1}&receiver_id=${id2}`;
         fetch( url, {
@@ -143,7 +141,7 @@ const getMessage = (id1, id2, token) => {
             console.error(error);
             return dispatch(failurMessage('Please try again!'));
         }) 
-    }
+    };
 }
 
 const sendMessage = (id1,id2, text, time) => {
@@ -159,7 +157,7 @@ const sendMessage = (id1,id2, text, time) => {
                 sender_id: id1,
                 receiver_id: id2,
                 message: text,
-                created_at: time //moment.js(new Date()).format()
+                created_at: time
             }),
         })
         .then(response => response.json())
@@ -194,6 +192,7 @@ export {
     sendMessage,
     updateSender,
     updateReceiver,
-    updateMessage
+    updateMessage,
+    updateSearchList
     // callGetMessage
 }

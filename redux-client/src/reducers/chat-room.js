@@ -4,7 +4,8 @@ const initialState = {
     messages: [],
     sender_id: '',
     receiver_id: 25,
-    messageToSend: ''
+    messageToSend: '',
+    searchList: []
   };
   
 const userInfoReducer = (state = initialState, action) => {
@@ -16,6 +17,11 @@ const userInfoReducer = (state = initialState, action) => {
         case "USER_LIST":
             state.userList = [...action.payload.data]
             return {...state};
+
+        case "SEARCH_LIST":
+            state.searchList = [...action.payload.data]
+            return {...state};
+    
 
         case "GET_MESSAGE":
             state.messages = [...action.payload.data]

@@ -2,7 +2,7 @@ import React from 'react';
 import TextField from '@material-ui/core/TextField';
 import { connect } from 'react-redux';
 import { changeMessage, failurMessage } from '../actions/common-actions'
-import { getUserInfo, getUserList, getMessage, updateMessage, updateReceiver, sendMessage } from '../actions/chat-room';
+import { getUserInfo, getUserList, updateSearchList, getMessage, updateMessage, updateReceiver, sendMessage } from '../actions/chat-room';
 import { Alert, AlertTitle } from '@material-ui/lab';
 import Button from '@material-ui/core/Button';
 import UserList from '../components/UserList';
@@ -12,6 +12,10 @@ import moment from 'moment';
 class ChatRoom extends React.Component {
     constructor (props) {
         super (props)
+
+        this.state = {
+            value: ''
+        }
     }
 
     componentWillMount () {
@@ -23,7 +27,7 @@ class ChatRoom extends React.Component {
         const token = JSON.parse(localStorage.getItem('document'));
         
         this.props.dispatch(getUserList(token));
-        
+
         setInterval(() => {
             this.updateMessageInSetTimeOut(token); 
         }, 3000)  
@@ -68,6 +72,10 @@ class ChatRoom extends React.Component {
         this.props.dispatch(changeMessage(e.target.value))
     }
 
+    handleChangeSearch = (e) => {
+        this.setState({value: e.target.value});
+    }
+
     handleSubmit = () => {
         const time = moment(new Date()).format();
         const {sender_id, receiver_id, messageToSend} = this.props.userInfoReducer;
@@ -81,8 +89,27 @@ class ChatRoom extends React.Component {
         }
     }
 
+    search =() => {
+        const { userList} = this.props.userInfoReducer;
+        const { value } = this.state;
+
+        const searchUser = userList.filter(item => {
+          if (item.first_name.includes(value)) {
+            return item;
+          }
+        })
+     
+        this.props.dispatch(updateSearchList(searchUser));
+    }
+     
+       handleSearch = (e) => {
+        if (e.charCode === 13) {
+          this.search();
+        }
+       }
+
     render () {
-        const {userList, userInfo, messages, sender_id, receiver_id, messageToSend} = this.props.userInfoReducer;
+        const {userList, searchList, userInfo, messages, sender_id, receiver_id, messageToSend} = this.props.userInfoReducer;
         const { notifications } = this.props.notifications;
         return (
           <div className="container">
@@ -98,16 +125,16 @@ class ChatRoom extends React.Component {
                         <input
                           type="text"
                           className="search-bar"
-                        //   value={this.state.value}
-                        //   onChange={this.handleChange}
-                        //   onKeyPress={this.handleSearch}
+                          value={this.state.value}
+                          onChange={this.handleChangeSearch}
+                          onKeyPress={this.handleSearch}
                           placeholder="Search"
                         />
                       </div>
                     </div>
                   </div>
                   <div className="inbox_chat">
-                    {userList.length > 0 && userList.map((item, index) => {
+                    {searchList.length > 0 && searchList.map((item, index) => {
                         return <UserList
                                  item={item}
                                  onClick={this.handleClick}

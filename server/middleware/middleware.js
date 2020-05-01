@@ -2,11 +2,9 @@ const jwt = require('jsonwebtoken');
 var connection = require('../config/config');
 
 const authenticateToken = (req, res, next ) => {
-  const authHeader = req && req.headers['authorization']
-  const token = authHeader && authHeader.split(' ')[1]
+  const authHeader = req && req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
   
-  console.log(token, '@@@@@@@@@@@@@@@@@@@', req.headers, '#########################')
-
   if (token === null || token === undefined) {
     res.json({
         status: 401,
@@ -27,8 +25,8 @@ const authenticateToken = (req, res, next ) => {
                 data: []
                 });
             return;
-          }
-      console.log('***************************************', value)
+        }
+
       if (value.id) {
         const query = `SELECT * FROM user_table WHERE id='${value.id}'`;
 
