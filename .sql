@@ -1,16 +1,10 @@
 --Command to install psql in ubuntu
 sudo apt install postgresql postgresql-contrib
 
---Switching over the postgres account
+--Switching over the postgres account(default user)
 Sudo -i -u postgres
 
 Psql
-
---To create user
-sudo -u postgres createuser --interactive
-
---Switch account to new user
-sudo -i -u username
 
 --To create database
 create database demo
